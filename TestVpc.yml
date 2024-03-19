@@ -24,11 +24,6 @@ Parameters:
     Type: String
     Default: 10.0.4.0/24
 
-  ProtectedSubnet1CIDR:
-    Description: Please enter the IP range (CIDR notation) for the public subnet in the third Availability Zone
-    Type: String
-    Default: 10.0.5.0/24
-
   PrivateSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
     Type: String
@@ -38,6 +33,11 @@ Parameters:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
     Type: String
     Default: 10.0.1.0/24
+
+  ProtectedSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the third Availability Zone
+    Type: String
+    Default: 10.0.5.0/24
 
   ProtectedSubnet2CIDR:
     Description: Please enter the IP range (CIDR notation) for the private subnet in the third Availability Zone
@@ -240,12 +240,12 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${EnvironmentName}-private-a-rt
+          Value: !Sub ${EnvironmentName}-protected-a-rt
 
   DefaultProtectedRoute1:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref PrivateRouteTable1
+      RouteTableId: !Ref ProtectedRouteTable1
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGateway1
 
@@ -266,7 +266,7 @@ Resources:
   DefaultProtectedRoute2:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref PrivateRouteTable2
+      RouteTableId: !Ref ProtectedRouteTable2
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGateway2
 
@@ -316,7 +316,4 @@ Outputs:
   ProtectedSubnet2:
     Description: A reference to the protected subnet in the 2nd Availability Zone
     Value: !Ref ProtectedSubnet2
-
-
-
 
