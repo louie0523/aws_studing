@@ -115,24 +115,24 @@ Resources:
   ProtectedSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: !Ref ProtectedSubnet1CIDR
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 0, !GetAZs  '' ]
+      CidrBlock: !Ref ProtectedSubnet1CIDR
+      MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName}-protected-a
-      MapPublicIpOnLaunch: false
 
   ProtectedSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: !Ref ProtectedSubnet2CIDR
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+      CidrBlock: !Ref ProtectedSubnet2CIDR
+      MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName}-protected-b
-      MapPublicIpOnLaunch: false
 
   NatGateway1EIP:
     Type: AWS::EC2::EIP
