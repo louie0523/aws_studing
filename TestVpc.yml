@@ -234,6 +234,48 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable2
       SubnetId: !Ref PrivateSubnet2
 
+  ProtectedRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-private-a-rt
+
+  DefaultProtectedRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway1
+
+  ProtectedSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref ProtectedRouteTable1
+      SubnetId: !Ref ProtectedSubnet1
+
+  ProtectedRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Protected-b-rt
+
+  DefaultProtectedRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway2
+
+  ProtectedSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref ProtectedRouteTable2
+      SubnetId: !Ref ProtectedSubnet2
+
 Outputs:
   VPC:
     Description: A reference to the created VPC
@@ -248,7 +290,7 @@ Outputs:
     Value: !Join [ ",", [ !Ref PrivateSubnet1, !Ref PrivateSubnet2]]
 
   ProtectedSubnets:
-    Description: A list of the private subnets
+    Description: A list of the protected subnets
     Value: !Join [ ",", [ !Ref ProtectedSubnet1, !Ref ProtectedSubnet2]]
 
   PublicSubnet1:
@@ -274,5 +316,7 @@ Outputs:
   ProtectedSubnet2:
     Description: A reference to the protected subnet in the 2nd Availability Zone
     Value: !Ref ProtectedSubnet2
+
+
 
 
