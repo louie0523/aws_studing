@@ -8,3 +8,4 @@ eks fargate profile 생성이 과제 1 목표
 
 + ALB( 로드 밸런서 ) 및 대상그룹은 쿠버네티스의 매니패스트 파일을 이용해서 생성해야함.
 
+https://cloud-oky.tistory.com/153#:~:text=%23%23%20Pod%EB%A5%BC%20Fargate%20%EC%97%90%20%EC%8A%A4%EC%BC%80%EC%A4%84%EB%A7%81%ED%95%A0%20%EC%A1%B0%EA%B1%B4%EC%9D%84%20%EB%AA%85%EC%8B%9C%20-,eks%20create-fargate-profile%20%20--cli-input-json%20file%3A%2F%2Fdemo.json%20%20--region%20ap-northeast-1
