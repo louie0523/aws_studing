@@ -1,0 +1,9 @@
+aws configure
+
+액세스키 :
+시크릿 키 :
+리전 :
+ap-northeast-2
+(서울)
+포멧 : json
+( 가장 많이 씀 )
