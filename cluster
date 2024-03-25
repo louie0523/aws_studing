@@ -1,0 +1,50 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: skills-cluster
+  region: ap-northeast-2
+  version: "1.29"
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+iam:
+  withOIDC: true
+vpc:
+  id: $vpc_id # $vpc_id를 vpc id로 변경
+  subnets:
+    public:
+      ap-northeast-2a-pub: { id: $subnet_id } # $subnet_id를 서브넷 id로 변경합니다. 서브넷 이름이 아니라 subnet id 
+      ap-northeast-2b-pub: { id: $subnet_id }
+      ap-northeast-2c-pub: { id: $subnet_id }
+    private:
+      ap-northeast-2a-priv: { id: $subnet_id }
+      ap-northeast-2b-priv: { id: $subnet_id }
+      ap-northeast-2c-priv: { id: $subnet_id }
+
+managedNodeGroups: # 노드그룹
+  - name: skills-app # 노드그룹 이름
+    instanceName: skills-app # 인스턴스 이름
+    labels: { skills: app } # 라벨
+    tags: { skills: app } # 태그
+    instanceType: c5.large # 인스턴스 유형
+    minSize: 2 # 최소값
+    maxSize: 20 # 최대값
+    desiredCapacity: 2 # 원하는값
+    privateNetworking: true # 프라이빗
+    subnets:
+     - ap-northeast-2a-priv
+     - ap-northeast-2b-priv
+     - ap-northeast-2c-priv
+    iam: # 역할 및 권한
+      withAddonPolicies:
+        imageBuilder: true
+        autoScaler: true
+        awsLoadBalancerController: true
+        cloudWatch: true
+
+fargateProfiles:
+  - name: skills-fargate # fargate 이름
+    selectors:
+      - namespace: skills # 네임스페이스
+        labels: # 라벨
+          key: value 
