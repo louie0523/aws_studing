@@ -1,0 +1,5 @@
+클러스터 파일을 yml로 저장후 
+
+eksctl create cluster -f cluster.yml
+
+명령어 입력
