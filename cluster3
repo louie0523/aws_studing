@@ -35,7 +35,6 @@ managedNodeGroups:
     subnets:
      - ap-northeast-2a-priv
      - ap-northeast-2b-priv
-     - ap-northeast-2c-priv
     iam:
       withAddonPolicies:
         imageBuilder: true
