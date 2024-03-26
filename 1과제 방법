@@ -1,0 +1,15 @@
+제 1과제 방법 정리
+
+ProVpc 파일로 스택 생성 후
+
+eksctl , kubectl 설치
+
+그후 iam -> 액세스키 생성 후 aws configure에서 자격 증명 발급후
+
+cluster.yml 코드 붙혀넣기 후
+
+만든 파일 실행후 클러스터 생성
+
+그후 db , elas 어쩌구 파란 동전 두개를 각각 protected 서브넷 2개를 그룹에 연결
+
+secret manger로 db 연결
