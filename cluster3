@@ -1,0 +1,51 @@
+echo 'apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: skills-cluster
+  region: ap-northeast-2
+  version: "1.29"
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+iam:
+  withOIDC: true
+vpc:
+  id: vpc-01c1e17131f5971bd
+  subnets:
+    public:
+      ap-northeast-2a-pub:
+        id: subnet-0c4fea2c5d7d6d3ec
+      ap-northeast-2b-pub:
+        id: subnet-0563941c1405a9fb3
+    private:
+      ap-northeast-2a-priv:
+        id: subnet-0741212f1b6ce89e4
+      ap-northeast-2b-priv:
+        id: subnet-0c16436baf09b2569
+managedNodeGroups:
+  - name: skills-app
+    instanceName: skills-app
+    labels: { skills: app }
+    tags: { skills: app }
+    instanceType: c5.large
+    minSize: 2
+    maxSize: 20
+    desiredCapacity: 2
+    privateNetworking: true
+    subnets:
+     - ap-northeast-2a-priv
+     - ap-northeast-2b-priv
+     - ap-northeast-2c-priv
+    iam:
+      withAddonPolicies:
+        imageBuilder: true
+        autoScaler: true
+        awsLoadBalancerController: true
+        cloudWatch: true
+fargateProfiles:
+  - name: skills-fargate
+    selectors:
+      - namespace: skills
+        labels:
+          key: value
+' > cluster3.yml
