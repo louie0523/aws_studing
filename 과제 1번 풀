@@ -1,0 +1,303 @@
+vpc 만들고
+
+주소는 10.10.0.0/16
+
+서브넷 생성
+
+10.10.1.0/24
+
+에서
+
+10.10.6.0/24
+
+까지
+
+인터넷게이트웨이 생성후 라우팅 생성후 연결
+
+그리고 퍼블릭 라우팅 테이블에서 서브넷 연결
+
+NAT 게이트 웨이에선 퍼블럭 서브넷 a와 연결
+
+NAT 게이트 웨이는 A,B 따로 생
+
+탄력적 ip 할당 후
+
+프라이빗 라우팅 테이블에서 NAT 게이트웨이, 서브넷 연결
+
+프로텍트 라우팅 테이블은 생성후 서브넷만 연결
+
+그후 bastion 서버 생성, 이중 인스턴스 설정 넣을때 iam에서 역할, ec2 -> 이름 정하고 새 사용자 만들고
+iam 인스턴슨가 뭐시긴가 아무튼 거기에 새로만든 사용자 추가
+
+이후 aws configure 입력후
+
+iam -> 대시보드에서 새 액세스 키 생성후 aws configure 로 자격증명하기
+
+그 후 iam 역할에서 역할생성 Eks -> eks policy 생성
+
+또다시 역할에서 EC2 -> 어드민 , AmazonEC2ContainerRegistryReadOnly , AmazonEKSWorkerNodePolicy
+
+eks , node group 보안그룹 생성
+
+시작 테이블 노드 보안 그룹으로 지정하기
+
+EKS 클러스터 -> 퍼블릭 및 프라이빗 둘다 설정, EKS 클래스터 생성
+
+생성까지 기다리고 OpenID 공급자
+
+iam에 가서 공급자에서 OpenID 추가 밎 대상을 sts.amazonaws.com
+
+클러스터와 bastion 서버 연결 명령어 :
+aws eks update-kubeconfig --name "클러스터이름" --region ap-northeast-2
+
+클러스터 연결 확인 명령어 :
+ kubectl get all
+
+app.go 파일 참조 <>
+
+k8s 폴더 생성 :
+mkdir k8s 
+k8s 폴더로 진입 :
+cd k8s
+app.go 폴더 생성 :
+cat <<EOF >> ./app.go
+app.go<복붙>
+
+vi app.go
+
+확인 명령어 : 
+ls
+출력 -> app.go 가 나와야함
+
+go와 docker 설치 명령
+sudo yum install -y go docker
+
+docker 사용 가능하게 하는 명령어 :
+sudo usermod -aG docker ec2-user
+
+docker 인포 따기 :
+docker info
+
+sudo systemctl enable --now docker
+sudo chmod 666 /var/run/docker.sock
+ls
+출력 : app.go
+
+go mod init app
+go mod tidy
+
+
+이떄 파일 두개는 다운받는다.
+
+cd k8s/
+ls
+
+출력 : app.go  go.mod  go.sum
+
+go build -o app
+ls
+
+출력 : app 이라는 초록색이 보여야함
+
+./app
+
+출력 : 시크릿 매니저 어쩌구 에러라면 성공
+
+vi Dockerfile
+
+그후 EC2 -> 
+
+도커 데이터베이스 보안그룹 생성
+skills-dockdb-sg
+
+인바운드 : 27017
+아웃바운드 : 모든 트래픽
+
+엘라스틱캐쉬 보안그룹 생성
+
+인바운드 : 6379 , 11211 / 각각 Redis / Mencasge 이다.
+아웃바운드 : 모든 트래픽
+
+아마존도커먼트D
+
+서브넷 그룹 (Protected 2개 생성)
+
+후
+
+클러스터(인스턴스형) 생성
+
+인스턴스 갯수 2
+
+인증 :
+
+사용자 이름 : skills
+비번 : 암거나 8자리 이상
+
+고급설정 :
+
+보안그룹 dockdb
+삭제보호 비
+
+클러스터 생성 후 ElasticCashe 이동
+
+서브넷 그룹 생성(Protected 2개)
+
+캐쉬 생성 -> Redis -> 기본 설정 사용자 지정 -> 가용영역 프로텍트 2 -> 보안 설정 사용자 지정 -> 미리 만든 엘라스틱 캐쉬 보안 그룹으로 선택
+
+생성
+
+도커먼트DB 리전 클러스 클러스터에 들어가 CA 인증서 다운로드 링크 복사 후 베이션 서버에 복붙
+
+mkdir static
+cd static/
+cat <<EOF >> ./index.html
+<index.html 파일 복붙>
+EOF
+
+다시
+vi Dockerfile
+
+FROM ubuntu:latest
+
+COPY ./global-bundle.pem ./
+COPY ./app ./
+COPY ./static ./static
+RUN apt update -y && apt install ca-certificates -y
+EXPOSE 8080
+
+CMD ["./app"]
+
+복붙 후
+
+:wq로 빠져나오기
+
+chmod 777 app
+ll 
+
+출력시 : 
+-rw-r--r--. 1 ec2-user ec2-user      141 Mar 30 06:22 Dockerfile
+-rwxrwxrwx. 1 ec2-user ec2-user 19205278 Mar 30 05:47 app
+-rw-r--r--. 1 ec2-user ec2-user     3437 Mar 30 05:29 app.go
+-rw-r--r--. 1 ec2-user ec2-user   183356 Dec 18 20:34 global-bundle.pem
+-rw-r--r--. 1 ec2-user ec2-user      842 Mar 30 05:40 go.mod
+-rw-r--r--. 1 ec2-user ec2-user     6994 Mar 30 05:40 go.sum
+
+다음은 ECR 리포지토리에서 URL 복붙후 
+
+docker build -t <링크> .
+<- 점 한칸 뒤에 필요
+
+그후 리포지토리 푸쉬 명령어 1번칸 복사 -> 입력
+
+그다음 리포지토리 URL 복사후
+
+ docker push "링크":latest
+
+eks 클래스터 -> 컴퓨팅 -> 노드 그룹 추가( 서브넷은 프라이빗만 2개 )
+
+시작 템플릿 꼭 추가!
+
+생성후 fargate 파일 추가
+
+일단 iam 가서 eks - fargate pod 선택 후 역할 만들면됨( 노드와 서브넷을 똑같이 프라이빗 2개 )
+
+secret manager : 다른 유형의 보안 암호
+
+mongoUri : mongodb://skills:<암호삽입>@docdb-2024-03-30-06-07-17.cluster-cxa0agseok3c.ap-northeast-2.docdb.amazonaws.com:27017/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false
+redisAddr : skills-elastic-cashe-qswhjm.serverless.apn2.cache.amazonaws.com:6379
+
+각각 
+
+엘라스틱캐쉬 엔드포인트
+
+그리고 이름 : /secrets/skills/app 로 하기
+
+보안 값 검색
+두개가 다 떠야함
+
+mkdir eks
+cd eks/
+
+vi namespace.yml
+<복붙>
+apiVersion: v1
+kind: Namespace
+
+metadata:
+  name: skills
+/////////////////////
+vi deployment.yml
+
+vi service.yml
+
+vi ingress.yml
+
+vi hpa.yml
+
+jola him ride
+밑의 명령어 입력
+cat <<EOF >> ./iam_policy.json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:*",
+                "elasticache:*",
+                "docdb-elastic:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+aws iam create-policy \
+    --policy-name skills-doc-policy \
+    --policy-document file://iam_policy.json
+eksctl create iamserviceaccount \
+    --cluster=skills-cluster \
+    --namespace=skills \
+    --name=skills-sa \
+    --attach-policy-arn=arn:aws:iam::$ACCOUNT_ID:policy/skills-doc-policy \
+    --override-existing-serviceaccounts \
+    --approve
+
+또다시 밑의 명령어 입력
+
+ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+kubectl apply -k github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=master
+curl -o alb_controller.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.3.1/docs/install/iam_policy.json
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://alb_controller.json
+eksctl create iamserviceaccount \
+    --cluster=skills-cluster \
+    --namespace=kube-system \
+    --name=aws-load-balancer-controller \
+    --attach-policy-arn=arn:aws:iam::$ACCOUNT_ID:policy/AWSLoadBalancerControllerIAMPolicy \
+    --override-existing-serviceaccounts \
+    --approve
+kubectl apply \
+    --validate=false \
+    -f https://github.com/jetstack/cert-manager/releases/download/v1.13.3/cert-manager.yaml
+curl -Lo v2_5_4_full.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.5.4/v2_5_4_full.yaml
+sed -i.bak -e '596,604d' ./v2_5_4_full.yaml
+sed -i.bak -e 's|your-cluster-name|skills-cluster|' ./v2_5_4_full.yaml
+kubectl apply -f v2_5_4_full.yaml
+curl -Lo v2_5_4_ingclass.yaml https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.5.4/v2_5_4_ingclass.yaml
+kubectl apply -f v2_5_4_ingclass.yaml
+
+참고 ! hpa 파일에서 오토스케일링 v2betav2를 -> v2로 변경
+
+kubectl apply -f deployment.yml
+
+kubectl apply -f service.yml
+
+kubectl apply -f hpa.yml
+
+kubectl apply -f ingress.yml
+
+
