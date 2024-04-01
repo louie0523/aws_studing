@@ -1,0 +1,15 @@
+1.) vpc 생성 => vpc를 cloudformation 해야 한다
+2.) bastion 생성... 생성 하기 전에 bastion의 보안그룹을 생성하고 시작템플릿 생성
+3.) eks & eks nodegroup의 iam 역할을 생성
+4.) eks cluster 생성
+5.) 클러스터 생성 후 openid connect를 이용해서 자격 증명 공급자를 생성했습니다.
+6.) documentDB 생성, 생성 후 wget이란 명령어를 이용해서 global-bundle.pem 가져오기
+7.) elastiCacheDB 생성
+8.) golang 앱을 빌드 (go mod init app -> go mod tidy -> go build -o app)
+9.) ECR 생성
+10.) Dockerfile 생성 및 빌드
+11.) docker 이미지를 ECR로 푸쉬
+12.) Secret Manger 생성
+13.) EKS Nodegroup 및 fargate 생성
+14.) Kubernetes 매니패스트 파일 생성
+15.) ALB Controller 생성
