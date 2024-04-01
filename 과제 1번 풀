@@ -33,7 +33,7 @@ iam 인스턴슨가 뭐시긴가 아무튼 거기에 새로만든 사용자 추�
 
 iam -> 대시보드에서 새 액세스 키 생성후 aws configure 로 자격증명하기
 
-그 후 iam 역할에서 역할생성 Eks fargate -> eks policy 생성
+그 후 iam 역할에서 역할생성 Eks -> eks policy 생성
 
 또다시 역할에서 EC2 -> 어드민 , AmazonEC2ContainerRegistryReadOnly , AmazonEKSWorkerNodePolicy
 
