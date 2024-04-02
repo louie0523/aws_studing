@@ -1,0 +1,197 @@
+서버 연결후 폴더 열기로 파일을 볼 수 있음.
+
+
+
+
+<96 : , 지워야함 >
+sudo yum install git -y
+
+code commit
+
+리포지토리 생성
+
+HTTPS 링크 복사
+
+git clone <복사한 링크>
+
+그후 자격증명 후
+
+cd <생성한 리포지토리 폴더 이름>/
+
+vi index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Selector</title>
+</head>
+<body>
+    <h1>Choose a Color</h1>
+    <form action="/showColor" method="get">
+        <label for="color">Enter Color (hex code):</label>
+        <input type="text" id="color" name="color">
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+
+git add .
+
+git commit -m "te"
+
+git branch -M front
+
+git push origin front
+
+다시 자격증명
+
+ * [new branch]      front -> front
+
+ 라고 떠야함.
+
+ codemmit 파이프라인
+
+ 파이프라인 생성! [ 뒤로 넘어가라 이거 잘못됨 ㅈㅂ]
+
+ 암것도 건들지말고 다음
+
+ 소스 - CodeCommit
+
+ 리포지토리 및 브랜치 선택( 각각 skills-code / front 일것이다. )
+
+ 다음
+
+ 빌드 스테이지 건너뛰기
+
+/////////// [ 버킷 생성하러가 ]
+ 
+ 버킷 생성( 이름 잘정해라 )
+
+ 바로 다음
+
+ 다시 버킷 -> 속성 -> 정적 웹 호스팅 어쩌구 저쩌구~
+
+활성화 후
+
+인덱스 문서 [ index.html ]로 하기
+
+그후 권한 -> 퍼플릭 엑세스 차단 -> 모두 풀어버리기 
+
+바로밑 버킷 정책  
+
+버킷 ARN 복사 후 
+
+버킷 생성기 간 다음 맨위 타입 셀렉트 -> S3으로 변경
+
+PriciPal : *
+All Action 체크!
+아마존 리소스 네임에 버킷 ARN/*
+///////////////////////[ 정책 예제 ]
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1712084474382",
+    "Statement": [
+        {
+            "Sid": "Stmt1712084473333",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:*",
+            "Resource": "arn:aws:s3:::s3-louie0523/*"
+        }
+    ]
+}
+//////////////////////////////
+ADD STATMENT
+
+밑에창으로 넘어가면 
+
+제네럴 폴리시 -> 나온거 전부 버킷 정책에 복붙!
+
+변경사항 저장!
+/////////////////////////
+다시 파이프라인
+
+소스 - s3
+////////////////////////////
+[ 취소 ]
+
+배포 : s3
+
+알맞는거 채크하고
+
+배포하기 전에 파일 압축 풀기
+
+배포 경로 하지마셈. 
+
+생성했으면 살짝 숨쉬고 물마시기!
+
+그리고 보안그룹 -> cluster-sg (보안그룹) 생성
+
+인바운드 : 모든트래픽 any4
+아웃바운드 : 모든트래픽 any4(안건들면됨)
+
+다음은 로드밸런스 보안그룹 -> alb-sg (보안그룹) 생성
+
+인바운드 : 사용자 어쩌구 / any4
+아웃바운드 : 모든 트래픽 any4( 안건듬 )
+
+그다음 대상그룹 
+
+타입 : 인스턴스 ->ip주소
+skills-tg-1
+Port : 8080
+
+이름만 바꾸고 한번더 2까지 생성
+skills-tg-2
+Port : 8080
+
+로드밸런서 생성///////////////////////
+
+체계 : 인터넷 경계 -> 내부
+
+vpc 선택후 가용 영역은 pri로 
+
+보안그룹 설정
+
+아까 만든 대상그룹 1 선택하고 바로 생성
+
+s3 버킷 -> 속성 -> 이제 정적 웹 호스팅 어쩌구에 링크 뜰텐데 들어가기
+
+Choose color가 떠야함
+
+잘됬으면 ECS로 ㄱㄱ 
+
+클러스터 생성( 이름만 적고 바로 생성 )
+
+새 태스크 정의 생성 
+
+이름 정하기
+
+잠시 iam 으로 이동
+
+역할 생성
+
+ECS 
+
+ECS TASK 생성
+
+테스크 역할 : 방금 생성한 iam 역할
+
+테스크 실행 역할 : 방금 생성한 iam 역할
+
+컨테이너 - 1
+
+이름 : 정하기
+이밎 URI : 사용자명/spring:1
+
+상태 확인 > 
+맨 윗칸
+
+CMD-SHELL, curl --fail http://localhost:8080/health || exit 1
+
+복붙
+
+체력이 딸린다..아... 더이상 못하겠다.
+
+쌤도 여긴 모른다 하셨다. 난 할만큼 한거야!
+
