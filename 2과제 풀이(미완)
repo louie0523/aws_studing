@@ -193,5 +193,4 @@ CMD-SHELL, curl --fail http://localhost:8080/health || exit 1
 
 체력이 딸린다..아... 더이상 못하겠다.
 
-쌤도 여긴 모른다 하셨다. 난 할만큼 한거야!
 
